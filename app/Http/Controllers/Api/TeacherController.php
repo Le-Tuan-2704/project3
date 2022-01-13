@@ -3,87 +3,64 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Courses;
-use App\Models\FollowTeacher;
-use App\Models\Instructor;
-use App\Models\Teachers;
+use App\Models\Teacher;
 use App\Models\User;
+use App\Http\Controllers\util\ObjectToArray;
 use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    public function update_info_teacher(Request $request)
-    {
-        $info_teacher = User::where("id", $request->user_id)->first();
-        $data = $request->only("user_id", "bio", "introduce");
-        $teacher = Teachers::create($data);
-        $teacher["info"] = $info_teacher;
+    //
+    function index(){
+        $users = User::where('position', 'teacher')->get();
+        $teachers = Teacher::all();
+        foreach ($users as $user) {
+            $merge[$user->id] = $user;
+        }
+        foreach($teachers as $teacher){
+            $merge[$teacher['user_id']] = ObjectToArray::mergeObjectsToArray($merge[$teacher['user_id']], $teacher);
+        }
+        $data = array();
+        foreach($merge as $item){
+            $data[] = $item;
+        }
         return response()->json([
-            "msg" => "cập nhập thông tin thành công",
-            "data" => $teacher
-        ]);
+            'error_code' => 0,
+            'teachers' => $data,
+        ], 200);
     }
-
-    public function follow_teacher(Request $request)
-    {
-
-        $teacher = Teachers::where("user_id", $request->id_instructor)->first();
-        if (empty($teacher)) {
+    function activeTeacher(Teacher $teacher){
+        $teacher->active = 1;
+        if($teacher->save()){
             return response()->json([
-                "msg" => "teacher ko tồn tại"
+                'error_code' => 0,
+                'msg' => "Active teacher is okey",
+            ]);
+        }else{
+            return response()->json([
+                'error_code' => 2,
+                'msg' => "Active teacher error",
             ]);
         }
-        $follow = FollowTeacher::create([
-            "id_student" => $request->user_id,
-            "id_teacher" => $request->id_instructor
-        ]);
-        return response()->json([
-            "msg" => "follow thành công",
-            "thông tin teacher" => $teacher,
-            "thông tin follow" => $follow
-        ]);
     }
-    public function unfollow_teacher(Request $request)
-    {
-        $follow = FollowTeacher::where([
-            ["id_student", $request->user_id],
-            ["id_teacher", $request->id_instructor]
-        ])->first();
-        if (empty($follow)) {
+    function inactiveTeacher(Teacher $teacher){
+        if(!$teacher){
             return response()->json([
-                "msg" => "bạn chưa follow người ngày"
+                'error_code' => 2,
+                'msg' => "teacher's id not correct",
             ]);
         }
-
-        $follow->delete();
-        return response()->json([
-            "msg" => "unfollow thành công"
-        ]);
-    }
-
-    public function instructor_profile(Request $request)
-    {
-        $teacher = Teachers::where("user_id", $request->id_instructor)->first();
-        if (empty($teacher)) {
+        $teacher->active = 0;
+        if($teacher->save()){
             return response()->json([
-                "msg" => "teacher ko tồn tại"
+                'error_code' => 0,
+                'msg' => "In-active teacher is okey",
+            ]);
+        }else{
+            return response()->json([
+                'error_code' => 2,
+                'msg' => "In-active teacher error",
             ]);
         }
-        $info_teacher = User::where("id", $request->id_instructor)->first();
-        $info_teacher["bio"] = $teacher->bio;
-        $info_teacher["introduce"] = $teacher->introduce;
-
-        $instructors = Instructor::where("id_teacher", $request->id_instructor)->get();
-        $data_courses = array();
-        foreach ($instructors as $courses) {
-            $data = Courses::where("id", $courses->id_courses)->first();
-            array_push($data_courses, $data);
-        }
-
-        return response()->json([
-            "msg" => "instructor profile",
-            "info" => $info_teacher,
-            "courses" => $data_courses
-        ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,57 +14,59 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post("login", "Api\UserController@login");
-Route::post("sign_up", "Api\UserController@sign_up");
-Route::post("reset_password", "Api\UserController@reset_password");
-Route::get("confirmUser/{email}", "Api\UserController@confirmUser");
+Route::post("log-in", "Api\UserController@logIn");
+Route::post("sign-up", "Api\UserController@signUp");
+Route::post("change-password", "Api\UserController@changePassword")->middleware('auth_login');
+Route::post("forget-password", "Api\UserController@forgetPassword");
+Route::get("my-info", "Api\UserController@show")->middleware('auth_login');
+Route::put("my-info", "Api\UserController@update")->middleware('auth_login');
 
+Route::get('courses', "Api\CourseController@index");
+Route::get('course/{course}', "Api\CourseController@show");
+Route::get("my-course-tree", "Api\CourseController@myCourseTree")->middleware('auth_login');
+Route::get('search-course/{keyword}', "Api\CourseController@search");
+//Route::post('register-course/{courseId}', "Api\CoourseController@register")->middleware('auth_login');
 
-Route::group(['middleware' => 'auth_login'], function () {
-    //user
-    Route::post("change_password", "Api\UserController@change_password");
-    Route::post("upload_avatar", "Api\UserController@upload_avatar");
-
-
-    //student
-    Route::group(['middleware' => 'user_student'], function () {
-        Route::get('courses', "Api\CoursesController@index");
-        Route::post('follow_teacher', "Api\TeacherController@follow_teacher");
-        Route::post('unfollow_teacher', "Api\TeacherController@unfollow_teacher");
-        Route::post("instructor_profile", "Api\TeacherController@instructor_profile");
-
-        Route::post('buy_courses', "Api\CoursesController@buy_courses");
-        Route::post("quiz/point", "Api\QuizController@pointQuiz");
-    });
-
-
-    //teacher
-    Route::group(['middleware' => 'user_teacher'], function () {
-        Route::post("update_info_teacher", "Api\TeacherController@update_info_teacher");
-        Route::post('courses', "Api\CoursesController@store");
-
-        Route::post('section/create', "Api\SectionController@store");
-        Route::delete('section/{id}', 'Api\SectionController@destroy');
-
-        Route::post("lesson/create", "Api\LessonController@store");
-        Route::delete('lesson/{id}', 'Api\LessonController@destroy');
-
-        Route::post("quiz/create", "Api\QuizController@store");
-    });
-
-    //student and teacher
-    Route::post("search_courses", "Api\CoursesController@search_courses");
-    Route::get("courses/{id}", "Api\CoursesController@show");
-
-    Route::post("section", "Api\SectionController@index");
-    Route::post("section/show", "Api\SectionController@show");
-
-    Route::post("lesson", "Api\LessonController@index");
-    Route::post("lesson/show", "Api\LessonController@show");
-
-    Route::get("test", "Api\UserController@test");
+Route::middleware(['auth_login', 'admin'])->group(function () {
+    Route::get("students", "Api\StudentController@index");
+    Route::get("teachers", "Api\TeacherController@index");
+    Route::delete("user/{user}", "Api\UserController@destroy");
+    Route::put("active-teacher/{teacher}", "Api\TeacherController@activeTeacher");
+    Route::put("inactive-teacher/{teacher}", "Api\TeacherController@inactiveTeacher");
+    
+    Route::post("course", "Api\CourseController@store");
+    Route::put("course/{course}", "Api\CourseController@update");
+    Route::delete('course/{course}', 'Api\CourseController@destroy');
+    Route::post('course/{course}/add-student/{student}', 'Api\CourseController@addStudent');
+    Route::post('course/{course}/add-teacher/{teacher}', 'Api\CourseController@addTeacher');
+    Route::delete('course/{course}/delete-student/{student}', "Api\CourseController@deleteStudent");
+    Route::delete('course/{course}/delete-teacher/{teacher}', "Api\CourseController@deleteTeacher");
+    Route::get('course/{course}/members', "Api\CourseController@getMember");
 });
+//done
+Route::get("lecture/{lecture}", "Api\LectureController@show");
+Route::get("test/{test}", "Api\TestController@show");
+Route::get("test/{test}/questions", "Api\QuestionController@index");
+
+Route::middleware(['auth_login', 'teacher'])->group(function () {
+    Route::post("course/{course}/lecture", "Api\LectureController@store");
+    Route::put("lecture/{lecture}", "Api\LectureController@update");
+    Route::delete("lecture/{lecture}", "Api\LectureController@destroy");
+
+    Route::post("course/{course}/test", "Api\TestController@store");
+    Route::put("/test/{test}", "Api\TestController@update");
+    Route::delete("test/{test}", "Api\TestController@destroy");
+    
+    Route::post("test/{test}/question", "Api\QuestionController@store");
+    Route::put("question/{question}", "Api\QuestionController@update");
+    Route::delete("question/{question}", "Api\QuestionController@destroy");
+});
+
+Route::get("lecture/{lecture}/comments", "Api\CommentController@index");
+Route::post("lecture/{lecture}/comment", "Api\CommentController@store")->middleware('auth_login');
+Route::put("comment/{comment}", "Api\CommentController@update")->middleware('auth_login');
+Route::delete("comment/{comment}", "Api\CommentController@destroy")->middleware('auth_login');

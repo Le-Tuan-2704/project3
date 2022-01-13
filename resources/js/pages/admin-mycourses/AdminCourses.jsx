@@ -29,8 +29,13 @@ export default function AdminCourse() {
         var treeData = [];
         courses.forEach( (item) => {
             var course = {
-                title: (<Dropdown overlay={CourseMenu(item.id)} trigger={['contextMenu']}>
-                    <div><i className="fa fa-book" /> {item.name}</div></Dropdown>),
+                title: (
+                    <Dropdown overlay={CourseMenu(item.id)} onContextMenu={event=>event.stopPropagation()} trigger={['contextMenu']}>
+                        <div>
+                            <i className="fa fa-book" /> {item.name}
+                        </div>
+                    </Dropdown>
+                ),
                 key: 'C-'+item.id,
                 // icon: <i className="fa fa-book" />,
             };

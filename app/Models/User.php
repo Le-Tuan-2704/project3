@@ -6,28 +6,25 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
-        'username',
-        'fullname',
-        'email',
-        'avatar',
-        'active',
-        'role',
+        'login_name',
+        'position',
         'password',
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes that should be hidden for serialization.
      *
      * @var array
      */
@@ -37,11 +34,40 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast.
      *
      * @var array
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
+
+    /**
+     * Get the user associated with the user session.
+     */
+    public function userSession()
+    {
+        return $this->hasOne(UserSession::class);
+    }
+
+    /**
+     * Get the user associated with the student.
+     */
+    public function student(){
+        return $this->hasOne(Student::class);
+    }
+
+    /**
+     * Get the user associated with the teacher.
+     */
+    public function teacher(){
+        return $this->hasOne(Teacher::class);
+    }
+
+    /**
+     * Get the user associated with the admin.
+     */
+    public function admin(){
+        return $this->hasOne(Admin::class);
+    }
 }

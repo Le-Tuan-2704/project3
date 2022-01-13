@@ -1,0 +1,14 @@
+.ant-tree-list{
+    height: 100%!important;
+    background-color: #007bff;
+    color: white;
+}
+.ant-tree-node-content-wrapper:hover{
+    background-color: seagreen!important;
+}
+.ant-tree-switcher-leaf-line{
+    background-color: #007bff;
+}
+.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected{
+    background-color: red;
+}

@@ -1,15 +1,12 @@
-import { useContext } from 'react';
+import React from 'react';
+import TLayout from '../../components/layout/tlayout/TLayout';
 
-import TopBar from '../../components/topbar/TopBar';
-
-
-export default function Home() {
-    const { user } = useContext(AuthContext);
-    var position = '';
-    if( user && user.position ) position = user.position;
-    
+function Home(props) {
     return (
-        <TopBar position={position}  />
-
-    )
+        <div>
+            <TLayout />
+        </div>
+    );
 }
+
+export default Home;

@@ -1,9 +1,13 @@
+.header{
+    height: 41px;
+}
+
 .logo{
     float: left;
     width: 140px;
     height: 40px;
     padding: 5px 10px;
-    background-image: linear-gradient(to right, #fff, #fff);
+    background-image: linear-gradient(to right, #ffffff, #ffffff);
 }
 
 .logo h3{
@@ -24,6 +28,8 @@
     display: flex;
     align-items: center;
     margin-right: 10px;
+
+    
 }
 
 .auth .auth-img{
@@ -46,58 +52,25 @@
     display: flex;
     justify-content: space-between;
 }
+
 .ant-menu-overflow.ant-menu.ant-menu-root.ant-menu-horizontal.ant-menu-dark{
     width: 0;
     flex: 1;
 }
+.ant-menu.ant-menu-dark, .ant-menu-dark .ant-menu-sub, .ant-menu.ant-menu-dark .ant-menu-sub {
+    color: #1890ff;
+    background: #fff;
+}
 .ant-menu-dark .ant-menu-item, .ant-menu-dark .ant-menu-item-group-title, .ant-menu-dark .ant-menu-item > a, .ant-menu-dark .ant-menu-item > span > a {
-    color: #000;
+    color: #1890ff;
 }
-
-.ant-menu.ant-menu-dark, .ant-menu-dark .ant-menu-sub, .ant-menu.ant-menu-dark .ant-menu-sub{
-    background-color: #fff;
-}
-
-.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
-    background-color: #1890ff;
-}
-
 .ant-menu-overflow-item.ant-menu-item.ant-menu-item-only-child .ant-menu-title-content {
-    border-left: 2px solid #fff;
-    border-right: 2px solid #fff;
-}
-.ant-menu-overflow-item.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child .ant-menu-title-content:hover {
-    border-left: 2px solid #1890ff; 
-    border-right: 2px solid #1890ff;
-    transition: color 0.3s;
-}
-.ant-menu-dark.ant-menu-horizontal > .ant-menu-item:hover {
-    background-color: #fff;
-    color: #1890ff;
+    border: none;
 }
 
-.ant-menu-dark .ant-menu-item-selected {
-    color: #fff;
-    border-right: 0;
-}
-
-.ant-menu-overflow-item.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child .ant-menu-title-content{
-    border-left: 2px solid #1890ff;
-    border-right: 2px solid #1890ff;
-}
-
-.ant-menu-overflow-item.ant-menu-overflow-item-rest.ant-menu-submenu.ant-menu-submenu-horizontal{
-    color: #000;
-}
-
-.ant-menu-overflow-item.ant-menu-overflow-item-rest.ant-menu-submenu.ant-menu-submenu-horizontal:hover{
-    color: #1890ff;
-}
-
-.ant-menu-overflow-item.ant-menu-item.ant-menu-item-only-child{
-
-}
-
-.header{
-    height: 41px;
+.ant-menu-item-selected a {
+    padding: 0px 2px;
+    color: #fff!important;
+    font-weight: bold;
+    border: none;
 }

@@ -11,7 +11,6 @@ import "./register.css";
 export default function Register() {
   return (
     <>
-
       <div className="d-flex justify-content-center">
         <div className="register-tabs">
           <Tabs defaultActiveKey="1">
@@ -33,8 +32,8 @@ const process = (values, setIsFulfill) => {
   let year = birthday.getFullYear();
   let month = birthday.getUTCMonth();
   let date = birthday.getDate();
-  month = (month<10)? ('0'+month) : month;
-  date = (date<10)? ('0'+date) : date;
+  month = (month < 10) ? ('0' + month) : month;
+  date = (date < 10) ? ('0' + date) : date;
   let birthday_str = year + '/' + month + '/' + date;
   let data = { ...values };
   data.birthday = birthday_str;

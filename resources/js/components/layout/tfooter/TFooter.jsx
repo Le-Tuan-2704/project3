@@ -4,7 +4,7 @@ import "./TFooter.css";
 
 function TFooter(props) {
     return (
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2022 Created by Ant UED</Footer>
+        <Footer className='tfooter' >Ant Design ©2022 Created by Ant UED</Footer>
     );
 }
 

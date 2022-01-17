@@ -1,0 +1,27 @@
+.box-my-courses{
+    margin: 30px 50px;
+}
+
+.box-search{
+    width: 400px;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.box-courses-item{
+    display: flex;
+}
+
+.box-courses-item .ant-card.ant-card-bordered.ant-card-hoverable{
+    margin: 20px;
+}
+
+.box-courses-item .ant-card-meta .ant-card-meta-detail{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.box-courses-item .ant-card-meta .ant-card-meta-detail .ant-card-meta-description{
+    margin-bottom: 8px;
+}

@@ -5,7 +5,7 @@ import React from 'react';
 
 function TSider(props) {
     return (
-        <Sider width={200} className="site-layout-background">
+        <Sider width={250} className="site-layout-background">
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}

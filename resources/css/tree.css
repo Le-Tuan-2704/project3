@@ -1,0 +1,25 @@
+
+.ant-tree-list {
+    height: 100%!important;
+    background-color: #fff!important;
+    color: #000!important;
+}
+
+.ant-tree.ant-tree-icon-hide.ant-dropdown-trigger.flex-grow-1.ant-tree-show-line{
+    height: 100%!important;
+    background-color: #fff!important;
+}
+
+.ant-tree-switcher-leaf-line {
+    background-color: #fff!important;
+}
+
+.ant-tree-node-content-wrapper:hover {
+    background-color: #fff!important;
+    color: #1890ff !important;
+}
+
+.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background-color: #1890ff!important;
+    color: #fff;
+}

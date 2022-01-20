@@ -1,6 +1,7 @@
 import { Button, Image } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import "./CoursesIntroduction.css";
 
@@ -19,8 +20,11 @@ function CoursesIntroduction(props) {
                     <Meta title="Code:" description="121" />
                     <Meta title="Price:" description="10.000" />
                     <Button className='btn-buy-courses' type="primary" ghost>
-                        Review
+                        <Link to="/mycourses">
+                            Review
+                        </Link>
                     </Button>
+
                     <Button className='btn-buy-courses' type="primary" ghost>
                         Buy
                     </Button>

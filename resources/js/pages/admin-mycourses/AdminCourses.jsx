@@ -136,6 +136,7 @@ export default function AdminCourse() {
                 console.log(error);
             });
     }, []);
+
     return (
         <>
             <TopBar choose="Courses" />

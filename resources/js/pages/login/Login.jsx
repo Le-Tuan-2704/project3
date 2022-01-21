@@ -55,9 +55,9 @@ export default function App() {
         <>
             {logined && <Navigate to={"/" + position} />}
 
-            <div className="position-fixed w-100 h-100 d-flex justify-content-center align-items-center">
+            <div className="position-fixed w-100 h-100 d-flex justify-content-center align-items-center overflow-auto">
                 <Form
-                    className="login-form"
+                    className="login-form bg-white p-3 border rounded"
                     name="basic"
                     labelCol={{ span: 100 }}
                     wrapperCol={{ span: 100 }}
@@ -71,7 +71,7 @@ export default function App() {
                     <FormItem.Password />
                     <FormItem.SubmitButton />
 
-                    <div className="text-right">
+                    <div className="text-end">
                         <Link to="/register">Register new account</Link>
                     </div>
 

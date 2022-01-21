@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Admin;
+use App\Models\Teach;
 use App\Models\UserSession;
 
 class UserController extends Controller
@@ -87,23 +88,38 @@ class UserController extends Controller
 
     public function uploadAvatar(Request $req)
     {
-        $user = User::where('id', $req->user_id)->first();
-        $file = $req->img->extension();
+
+        $file = $req->image->extension();
 
         if ($file != "jpg" && $file != "jpeg" && $file != "png") {
             return response()->json([
+                "error_code" => 2,
                 "msg" => "định dạng file ko đúng"
             ]);
         }
+        if($req->user['position']=='student'){
+            $user = Student::find($req->user['id']);
+        }else if($req->user['position']=='teacher'){
+            $user = Teacher::find($req->user['id']);
+        }else if($req->user['position']=='admin'){
+            $user = Admin::find($req->user['id']);
+        }
+        if($user->avatar) unlink(storage_path('app/'.$user->avatar));
 
-        $fileName = $user->username . '.' . $req->img->extension();
-
-        $req->img->move(public_path('avatar_user'), $fileName);
-        $user->update(["avatar" => $fileName]);
+        $result = $req->file('image')->store('public/avatars');
+        if(!$result){
+            return response()->json([
+                'error_code' => 2,
+                'msg' => "không lưu trữ file được"
+            ], 200);
+        }
+        
+        $user->avatar = $result;
+        $user->save();
         return response()->json([
-            "msg" => "upload ảnh thành công",
-            "data" => $user
-        ], 201);
+            'error_code' => 0,
+            "avatar" => '/storage/' . $user->avatar,
+        ], 200);
     }
 
     public function changePassword(Request $req){
@@ -118,6 +134,8 @@ class UserController extends Controller
         $user = User::find($req->user['id']);
         if($req->user['position']=='student'){
             $student = Student::find($req->user['id']);
+            if($student->avatar)
+                $student->avatar = '/storage/' . $student->avatar;
             if($student){
                 return response()->json([
                     'error_code' => 0,
@@ -127,6 +145,8 @@ class UserController extends Controller
         }
         if($req->user['position']=='teacher'){
             $teacher = Teacher::find($req->user['id']);
+            if($teacher->avatar)
+                $teacher->avatar = '/storage/' . $teacher->avatar;
             if($teacher){
                 return response()->json([
                     'error_code' => 0,
@@ -136,6 +156,8 @@ class UserController extends Controller
         }
         if($req->user['position']=='admin'){
             $admin = Admin::find($req->user['id']);
+            if($admin->avatar)
+                $admin->avatar = '/storage/' . $admin->avatar;
             if($admin){
                 return response()->json([
                     'error_code' => 0,

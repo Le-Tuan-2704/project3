@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Course;
+use App\Models\Lecture;
 use Illuminate\Http\Request;
 use App\Models\Test;
 
@@ -16,7 +16,7 @@ class TestController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $req, Course $course)
+    public function store(Request $req, Lecture $lecture)
     {
         //
         $validator = Validator::make($req->all(), [
@@ -29,7 +29,7 @@ class TestController extends Controller
             ], 200);
         }
         $test = new Test($req->all());
-        $test->course_id = $course->id;
+        $test->lecture_id = $lecture->id;
         if($test->save()){
             return response()->json([
                 'error_code' => 0,
@@ -38,7 +38,7 @@ class TestController extends Controller
         }else{
             return response()->json([
                 'error_code' => 2,
-                'msg' => 'add test fail',
+                'msg' => 'Add test fail',
             ], 200);
         }
     }
@@ -67,13 +67,8 @@ class TestController extends Controller
      */
     public function update(Request $req, Test $test)
     {
-        //
-        $changedable = ['name', 'description'];
-        foreach($changedable as $key){
-            if($req[$key]){
-                $test[$key] = $req[$key];
-            }
-        }
+        if($req->name) $test->name = $req->name;
+        $test->description = $req->description;
         if($test->save()){
             return response()->json([
                 'error_code' => 0,

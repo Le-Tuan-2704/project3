@@ -7,6 +7,7 @@ use App\Models\Teacher;
 use App\Models\User;
 use App\Http\Controllers\util\ObjectToArray;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TeacherController extends Controller
 {
@@ -29,6 +30,22 @@ class TeacherController extends Controller
             'teachers' => $data,
         ], 200);
     }
+
+    public function search($keyword){
+        $users = DB::table('teachers')
+            ->join('users', 'teachers.user_id', '=', 'users.id')
+            ->select('teachers.*', 'users.id', 'users.login_name')
+            ->where('users.login_name', 'like', "%{$keyword}%")
+            ->orWhere('teachers.full_name', 'like', "%{$keyword}%")
+            ->orWhere('teachers.phone', 'like', "%{$keyword}%")
+            ->orWhere('teachers.email', 'like', "%{$keyword}%")
+            ->get();
+        return response()->json([
+            'error_code' => 0,
+            'teachers' => $users,
+        ], 200);
+    }
+
     function activeTeacher(Teacher $teacher){
         $teacher->active = 1;
         if($teacher->save()){

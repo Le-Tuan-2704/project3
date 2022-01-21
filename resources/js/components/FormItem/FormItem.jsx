@@ -3,7 +3,7 @@ const { Option } = Select;
 
 function Title({ style, value }){
     return (
-        <h1 style={ style? style:{textAlign:'center'} }>{value}</h1>
+        <h2 style={ style? style:{textAlign:'center'} }>{value}</h2>
     )
 }
 

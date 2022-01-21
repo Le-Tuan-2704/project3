@@ -16,7 +16,7 @@ class Teacher
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->user->position!='teacher'){
+        if($request->user['position']!='teacher'){
             return response()->json([
                 'error_code' => 2,
                 'msg' => 'Permision require teacher',

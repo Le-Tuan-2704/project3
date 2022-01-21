@@ -15,7 +15,7 @@ class LectureController extends Controller
         $validator = Validator::make($req->all(), [
             'name' => 'required|max:255',
             'description' => 'required|string',
-            'video_url' => '',
+            'video_url' => 'required|max:1024',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -24,7 +24,7 @@ class LectureController extends Controller
             ], 200);
         }
         $lecture = new Lecture($req->all());
-        $lecture->course_id = $course->id();
+        $lecture->course_id = $course->id;
         if($lecture->save()){
             return response()->json([
                 'error_code' => 0,

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Test;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
@@ -25,6 +27,18 @@ class QuestionController extends Controller
         ], 200);
     }
 
+    public function getFullQuestions(Test $test){
+        $fullQuestions = DB::table('questions')
+        ->join('answers', 'questions.id', '=', 'answers.question_id')
+        ->select('questions.*', 'answers.choice1 as answer1', 'answers.choice2 as answer2', 'answers.choice3 as answer3', 'answers.choice4 as answer4')
+        ->where('questions.test_id', $test->id)
+        ->get();
+        return response()->json([
+            'error_code' => 0,
+            'full_questions' => $fullQuestions,
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -35,9 +49,9 @@ class QuestionController extends Controller
     {
         //
         $validator = Validator::make($req->all(),[
-            'content' => 'required',
-            'choice1' => 'required',
-            'choice2' => 'required',
+            'content' => 'required|string',
+            'choice1' => 'required|string',
+            'choice2' => 'required|string',
         ]);
         if($validator->fails()){
             return response()->json([
@@ -45,14 +59,28 @@ class QuestionController extends Controller
                 'error' => $validator->errors()
             ], 200);
         }
+        $answerData = [
+            'choice1' => ($req->choice1&&$req->answer1)? 1: 0,
+            'choice2' => ($req->choice2&&$req->answer2)? 1: 0,
+            'choice3' => ($req->choice3&&$req->answer3)? 1: 0,
+            'choice4' => ($req->choice4&&$req->answer4)? 1: 0,
+        ];
         $question = new Question($req->all());
         $question->test_id = $test->id;
-        if($question->save()){
-            return response()->json([
-                'error_code' => 2,
-                'msg' => 'add question fail'
-            ], 200);
-        }
+        $question->save();
+        $answer = new Answer($answerData);
+        $answer->question_id = $question->id;
+        $answer->save();
+
+        $fullQuestion = DB::table('questions')
+        ->join('answers', 'questions.id', '=', 'answers.question_id')
+        ->select('questions.*', 'answers.choice1 as answer1', 'answers.choice2 as answer2', 'answers.choice3 as answer3', 'answers.choice4 as answer4')
+        ->where('questions.id', $question->id)
+        ->first();
+        return response()->json([
+            'error_code' => 0,
+            'full_question' => $fullQuestion,
+        ], 200);
     }
 
     /**
@@ -64,23 +92,40 @@ class QuestionController extends Controller
      */
     public function update(Request $req, Question $question)
     {
-        $changedable = ['content', 'choice1', 'choice2', 'choice3', 'choice4'];
-        foreach($changedable as $key){
-            if($req[$key]){
-                $question[$key] = $req[$key];
-            }
-        }
-        if($question->save()){
+        $validator = Validator::make($req->all(),[
+            'content' => 'required|string',
+            'choice1' => 'required|string',
+            'choice2' => 'required|string',
+        ]);
+        if($validator->fails()){
             return response()->json([
-                'error_code' => 0,
-                'question' => $question
-            ], 200);
-        }else{
-            return response()->json([
-                'error_code' => 2,
-                'msg' => 'update question fail'
+                'error_code' => 1,
+                'error' => $validator->errors()
             ], 200);
         }
+        $answerData = [
+            'choice1' => ($req->choice1&&$req->answer1)? 1: 0,
+            'choice2' => ($req->choice2&&$req->answer2)? 1: 0,
+            'choice3' => ($req->choice3&&$req->answer3)? 1: 0,
+            'choice4' => ($req->choice4&&$req->answer4)? 1: 0,
+        ];
+        $question->content = $req->content;
+        $question->choice1 = $req->choice1;
+        $question->choice2 = $req->choice2;
+        $question->choice3 = $req->choice3;
+        $question->choice4 = $req->choice4;
+        $question->save();
+        Answer::query()->where('question_id', $question->id)->update($answerData);
+
+        $fullQuestion = DB::table('questions')
+        ->join('answers', 'questions.id', '=', 'answers.question_id')
+        ->select('questions.*', 'answers.choice1 as answer1', 'answers.choice2 as answer2', 'answers.choice3 as answer3', 'answers.choice4 as answer4')
+        ->where('questions.id', $question->id)
+        ->first();
+        return response()->json([
+            'error_code' => 0,
+            'full_question' => $fullQuestion,
+        ], 200);
     }
 
     /**
@@ -91,16 +136,10 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-        if($question->delete()){
-            return response()->json([
-                'error_code' => 0,
-                'msg' => 'delete question successfully'
-            ], 200);
-        }else{
-            return response()->json([
-                'error_code' => 2,
-                'msg' => 'delete question fails'
-            ], 200);
-        }
+        $question->delete();
+        return response()->json([
+            'error_code' => 0,
+            'msg' => 'delete question successfully'
+        ], 200);
     }
 }

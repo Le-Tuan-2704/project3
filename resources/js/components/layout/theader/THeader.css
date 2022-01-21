@@ -28,8 +28,6 @@
     display: flex;
     align-items: center;
     margin-right: 10px;
-
-    
 }
 
 .auth .auth-img{
@@ -51,6 +49,13 @@
 .ant-layout-header{
     display: flex;
     justify-content: space-between;
+    padding: 0;
+    background-color: #fff;
+}
+
+.ant-layout-header .ant-menu {
+    line-height: 41px;
+    white-space: nowrap;
 }
 
 .ant-menu-overflow.ant-menu.ant-menu-root.ant-menu-horizontal.ant-menu-dark{

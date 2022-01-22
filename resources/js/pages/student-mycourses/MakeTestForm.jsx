@@ -51,7 +51,7 @@ export default function App({idObj}){
 
     const onSubmit = (event) => {
         event.preventDefault();
-        if(answers.length==0){
+        if(questions.length==0){
             message.error('Test is empty');
             return;
         }

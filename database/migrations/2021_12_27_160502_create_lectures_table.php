@@ -17,7 +17,7 @@ class CreateLecturesTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->string('video_url')->nullable();
+            $table->string('video_url', 1024)->nullable();
             $table->foreignId('course_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });

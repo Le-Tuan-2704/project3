@@ -2,34 +2,22 @@ import { useState, useEffect, useContext } from "react";
 import { BrowserRouter, Link } from "react-router-dom";
 
 import { AuthContext } from "../../context/AuthContext";
-import { Menu, Layout, Dropdown, message } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { LoginStart } from "../../context/AuthActions";
+import { Menu, Dropdown, Avatar, message } from "antd";
+import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import ProfileModal from "./ProfileModal";
 
 import API from '../../util/api';
 
-import "antd/dist/antd.css";
 import "./topbar.css";
 
-// function UserOptionList({ position }) {
-//     return (
-//         <Menu>
-//             <Menu.Item key="0">
-//                 <Link to={"/" + position + "/profile"}>Profile</Link>
-//             </Menu.Item>
-//             <Menu.Item key="1">
-//                 <Link to={"/" + position + "/update"}>Update</Link>
-//             </Menu.Item>
-//             <Menu.Divider />
-//             <Menu.Item key="3">
-//                 <Link to="/">Log out</Link>
-//             </Menu.Item>
-//         </Menu>
-//     );
-// }
+export default function App({ style, choose }) {
+    const { user, dispatch } = useContext(AuthContext);
+    const [isLogout, setIsLogout] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
+    const [avatar, setAvatar] = useState('');
+    const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
 
-export default function App({ choose }) {
-    const { user } = useContext(AuthContext);
-    const [full_name, setFullName] = useState('');
     const position = user.position;
     useEffect( ()=>{
         if(user){
@@ -39,7 +27,8 @@ export default function App({ choose }) {
                 switch (res.data["error_code"]) {
                     case 0:
                         console.log(res.data.user.full_name);
-                        setFullName(res.data.user.full_name);
+                        setUserInfo(res.data.user);
+                        setAvatar(res.data.user.avatar);
                         break;
                     case 2:
                         message.warning(res.data.msg);
@@ -56,19 +45,46 @@ export default function App({ choose }) {
     var url = [];
     if (position == "admin") {
         menu = ['Courses', 'Students', 'Teachers'];
-        url = ['/admin', '/admin/students', '/admin/teachers'];
+        url = ['/admin/courses', '/admin/students', '/admin/teachers'];
     } else if (position == "teacher") {
         menu = ['My courses'];
-        url = ['/teacher']
+        url = ['/teacher/my-courses']
     } else if (position == "student") {
-        menu = ['Home', 'My Courses'];
+        menu = ['Home', 'My courses'];
         url = ['/', '/my-courses'];
     } else {
         menu = ["Home", "Login", "Register"];
         url = ['/', '/login', 'register'];
     }
+
+    const UserOptionList = (position) => {
+        return (
+            <Menu>
+                <Menu.Item key="0">
+                    <a onClick={()=>{setIsProfileModalVisible(true)}} >Profile</a>
+                </Menu.Item>
+                <Menu.Item disabled key="1">
+                    <Link to={"/" + position + "/update"}>Update</Link>
+                </Menu.Item>
+            </Menu>
+        );
+    }
+
+    const logout = () => {
+        localStorage.clear();
+        dispatch(LoginStart());
+        setIsLogout(true);
+    }
+
     return (
-        <div className="header">
+        <>
+        {isLogout? <Navigate to='/' />: null}
+        {isProfileModalVisible ?
+            <ProfileModal avatar={avatar} setAvatar={setAvatar}
+                setIsModalVisible={setIsProfileModalVisible} />
+            :null
+        }
+        <div className="TopBar" style={style}>
             <div className="logo">
                 <div>E-learning</div>
             </div>
@@ -85,27 +101,29 @@ export default function App({ choose }) {
                         </Menu.Item>
                     ))}
                 </Menu>
-            </div>
-            {/* <div className="user-info-frame">
-                <Dropdown
-                    overlay={
-                        position ? <UserOptionList position={position} /> : ""
-                    }
-                    placement="bottomRight"
-                >
-                    <Dropdown.Button
-                        overlay=""
-                        icon={
-                            <UserOutlined
-                                style={{ fontSize: "24px", color: "#08c" }}
-                            />
-                        }
+                <div className="me-3">
+                    <Dropdown
+                        overlay={ (user.position&&user.position!='admin') ? UserOptionList(position) : "" }
+                        placement="bottomRight"
                     >
-                        {username || "Guest"}
-                    </Dropdown.Button>
-                </Dropdown>
-            </div> */}
+                        <Dropdown.Button
+                            overlay=""
+                            icon={
+                                avatar?
+                                <img src={avatar} style={{width: '26px', height: '26px', objectFit: 'cover'}} />
+                                : <UserOutlined style={{ fontSize: "26px", color: "#08c" }} />
+                            }
+                        >
+                            {userInfo.full_name || "Guest"}
+                        </Dropdown.Button>
+                    </Dropdown>
+                </div>
+                <div className="me-3 d-flex justify-align-center align-items-center">
+                    <i className="fa fa-sign-out text-danger" style={{fontSize: '24px'}} onClick={logout}></i>
+                </div>
+            </div>
         </div>
+        </>
     );
 }
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,11 @@ Route::post("change-password", "Api\UserController@changePassword")->middleware(
  */
 Route::post("forget-password", "Api\UserController@forgetPassword");
 /**
+ * upload avatar cho user
+ */
+Route::post("upload-avatar", "Api\UserController@uploadAvatar")->middleware('auth_login');
+
+/**
  * lấy thông tin người dùng
  */
 Route::get("my-info", "Api\UserController@show")->middleware('auth_login');
@@ -51,6 +57,10 @@ Route::get('courses', "Api\CourseController@index");
  * lấy thông tin khóa học theo id
  */
 Route::get('course/{course}', "Api\CourseController@show");
+/**
+ * lấy danh sách thành viên trong khóa học bao gồm học viên và giảng viên
+ */
+Route::get('course/{course}/members', "Api\CourseController@getMember")->middleware('auth_login');
 /**
  * lấy cây thông tin khóa học
  */
@@ -73,6 +83,8 @@ Route::middleware(['auth_login', 'admin'])->group(function () {
      * lấy danh sách giảng viên
      */
     Route::get("teachers", "Api\TeacherController@index");
+    Route::get('students/search/{keyword}', "Api\StudentController@search");
+    Route::get('teachers/search/{keyword}', "Api\TeacherController@search");
     /**
      * xóa người dùng
      */
@@ -94,7 +106,7 @@ Route::middleware(['auth_login', 'admin'])->group(function () {
     /**
      * sửa khóa học
      */
-    Route::put("course/{course}", "Api\CourseController@update");
+    Route::post("course/{course}", "Api\CourseController@update");
     /**
      * xóa khóa học
      */
@@ -102,11 +114,11 @@ Route::middleware(['auth_login', 'admin'])->group(function () {
     /**
      * thêm học viên vào kháo học
      */
-    Route::post('course/{course}/add-student/{student}', 'Api\CourseController@addStudent');
+    Route::post('course/{course}/add-student/{login_name}', 'Api\CourseController@addStudent');
     /**
      * thêm giảng viên vào khóa học
      */
-    Route::post('course/{course}/add-teacher/{teacher}', 'Api\CourseController@addTeacher');
+    Route::post('course/{course}/add-teacher/{login_name}', 'Api\CourseController@addTeacher');
     /**
      * xóa học viên khỏi khóa học
      */
@@ -115,10 +127,6 @@ Route::middleware(['auth_login', 'admin'])->group(function () {
      * xóa giảng viên khỏi khóa học
      */
     Route::delete('course/{course}/delete-teacher/{teacher}', "Api\CourseController@deleteTeacher");
-    /**
-     * lấy danh sách thành viên trong khóa học bao gồm học viên và giảng viên
-     */
-    Route::get('course/{course}/members', "Api\CourseController@getMember");
 });
 
 /**
@@ -132,7 +140,9 @@ Route::get("test/{test}", "Api\TestController@show");
 /**
  * lấy câu hỏi của bài test
  */
-Route::get("test/{test}/questions", "Api\QuestionController@index");
+Route::get("test/{test}/questions", "Api\QuestionController@index")->middleware('auth_login');
+Route::post("test/{test}/make-test", "Api\TestController@makeTest")->middleware('auth_login');
+
 
 /**
  * quyền của giảng viên
@@ -162,19 +172,12 @@ Route::middleware(['auth_login', 'teacher'])->group(function () {
      * xóa bài test
      */
     Route::delete("test/{test}", "Api\TestController@destroy");
-
-    /**
-     * thêm mới câu hỏi
-     */
-    Route::post("test/{test}/question", "Api\QuestionController@store");
-    /**
-     * cập nhập câu hỏi
-     */
-    Route::put("question/{question}", "Api\QuestionController@update");
-    /**
-     * xóa câu hỏi
-     */
-    Route::delete("question/{question}", "Api\QuestionController@destroy");
+    
+    Route::get("test/{test}/full-questions", "Api\QuestionController@getFullQuestions");
+    Route::post("test/{test}/full-question", "Api\QuestionController@store");
+    Route::get("test/{test}/test-results", "Api\TestResultController@index");
+    Route::put("full-question/{question}", "Api\QuestionController@update");
+    Route::delete("full-question/{question}", "Api\QuestionController@destroy");
 });
 
 /**

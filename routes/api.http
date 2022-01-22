@@ -86,10 +86,29 @@ Authorization: Bearer V0iQPmP7I5gNq61okozozYcwIqREkUJXuoQjJCVaf37GZAqi8SnSFCfFZW
     "price": 5000
 }
 ###
+GET http://localhost:8000/api/students/search/student
+Authorization: Bearer V0iQPmP7I5gNq61okozozYcwIqREkUJXuoQjJCVaf37GZAqi8SnSFCfFZWNd
+
+###
 GET http://localhost:8000/api/course/1/members
 Authorization: Bearer V0iQPmP7I5gNq61okozozYcwIqREkUJXuoQjJCVaf37GZAqi8SnSFCfFZWNd
 ###
-PUT http://localhost:8000/api/course/1
+POST http://localhost:8000/api/course/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer V0iQPmP7I5gNq61okozozYcwIqREkUJXuoQjJCVaf37GZAqi8SnSFCfFZWNd
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="code"
+
+title
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="image"; filename="1.png"
+# Content-Type: image/png
+
+# < ./1.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+###
+POST http://localhost:8000/api/course/1
 Content-Type: application/json
 //Authorization: Bearer Lz7cdLcTfygpe8kob1X9pzCiP4yeSqNh8O4FbyKeGUF0BIf83uEjp6asoJr4
 //Authorization: Bearer 7Pyo3vi8e8NsjPCjygYTRXCAoqgtZSNYaMprDg3FfWP017SKUP4SVTIvGbsI

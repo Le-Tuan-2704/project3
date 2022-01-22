@@ -1,29 +1,38 @@
 import "antd/dist/antd.css";
 import { useContext } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import LoginMiddleware from "./middleware/LoginMiddleware";
-import Home from "./pages/home/Home";
-import Register from "./pages/register/Register";
-import CoursesIntroduction from "./pages/student/CoursesIntroduction";
-import CoursesLayout from "./pages/student/CoursesLayout";
-import MyCourses from "./pages/student/MyCourses";
+import AdminCourses from './pages/admin-courses/AdminCourses';
+import AdminStudents from './pages/admin-students/AdminStudents';
+import AdminTeachers from './pages/admin-teachers/AdminTeachers';
 
-export default function Routing() {
-  const { user } = useContext(AuthContext);
+import StudentMycourses from './pages/student-mycourses/StudentMycourses';
+import TeacherMycourses from './pages/teacher-mycourses/TeacherMycourses';
 
+import Home from './pages/home/Home';
+import Test from './pages/test/Test';
+
+export default function App() {
+    const { user } = useContext(AuthContext);
   return (
-    <Routes >
-      <Route path="/" exact element={<Home />} />
-      <Route path='/login' element={LoginMiddleware(user ? user.position : '')} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/courses" exact element={<MyCourses />} />
-      <Route path="/courses/introduction" element={<CoursesIntroduction />} />
-      <Route path="/mycourses" element={<CoursesLayout />} />
-      {/* <Route path="/courses" element={(user && user.position == 'admin') ? <AdminCourses /> : <Navigate to='/login' />} /> */}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={ (user&&user.position=='student')? <Home /> : <Navigate to="/login" /> } />
+        <Route path='/login' element={ LoginMiddleware(user? user.position: '') } />
+        <Route path="/register" element={<Register />} />
 
-      <Route path="/mycourses/test" element={<Navigate to="/create" />} />
-      <Route path="/redirect" element={<Navigate to="/create" />} />
-    </Routes >
+        <Route path="/my-courses" element={ (user&&user.position=='student')? <StudentMycourses /> : <Navigate to='/login' /> } />
+
+        <Route path="/teacher/my-courses" element={ (user&&user.position=='teacher')? <TeacherMycourses /> : <Navigate to='/login' /> } />
+
+        <Route path="/admin/courses" element={ (user&&user.position=='admin')? <AdminCourses /> : <Navigate to='/login' /> } />
+        <Route path="/admin/students" element={ (user&&user.position=='admin')? <AdminStudents /> : <Navigate to='/login' /> } />
+        <Route path="/admin/teachers" element={ (user&&user.position=='admin')? <AdminTeachers /> : <Navigate to='/login' /> } />
+        <Route path="/redirect" element={<Navigate to="/create" />} />
+
+        <Route path="/test" element={<Test />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

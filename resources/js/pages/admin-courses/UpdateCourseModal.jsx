@@ -68,7 +68,7 @@ export default function App({ courseId, updateCourse, setIsModalVisible }){
                 document.getElementById('imageView').setAttribute('src',`${e.target.result}`);
             }
             reader.readAsDataURL(input.files[0]);
-        } else {
+        }else{
             choosedFile = null;
             document.getElementById('imageView').removeAttribute('src');
         }

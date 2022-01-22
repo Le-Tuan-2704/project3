@@ -1,7 +1,8 @@
-import "antd/dist/antd.css";
 import { useContext } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
+
+import Register from "./pages/register/Register";
 import LoginMiddleware from "./middleware/LoginMiddleware";
 import AdminCourses from './pages/admin-courses/AdminCourses';
 import AdminStudents from './pages/admin-students/AdminStudents';
@@ -11,7 +12,6 @@ import StudentMycourses from './pages/student-mycourses/StudentMycourses';
 import TeacherMycourses from './pages/teacher-mycourses/TeacherMycourses';
 
 import Home from './pages/home/Home';
-import Test from './pages/test/Test';
 
 export default function App() {
     const { user } = useContext(AuthContext);
@@ -31,7 +31,6 @@ export default function App() {
         <Route path="/admin/teachers" element={ (user&&user.position=='admin')? <AdminTeachers /> : <Navigate to='/login' /> } />
         <Route path="/redirect" element={<Navigate to="/create" />} />
 
-        <Route path="/test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   );

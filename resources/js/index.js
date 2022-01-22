@@ -1,8 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
-import "../css/app.css";
-import TLayout from "./components/layout/tlayout/TLayout.jsx";
+import Routing from "./Routing.js";
 import { AuthContextProvider } from "./context/AuthContext";
 
 import "antd/dist/antd.css";
@@ -10,11 +8,9 @@ import "./style.css";
 
 ReactDOM.render(
   // <React.StrictMode>
-  <AuthContextProvider>
-    <BrowserRouter>
-      <TLayout />
-    </BrowserRouter>
-  </AuthContextProvider>
+    <AuthContextProvider>
+      <Routing />
+    </AuthContextProvider>
   // </React.StrictMode>
-  , document.getElementById("app")
+  ,document.getElementById("app")
 );
